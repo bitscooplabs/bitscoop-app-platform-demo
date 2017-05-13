@@ -3,13 +3,17 @@
 const Chart = require('chart');
 const $ = require('jquery');
 const moment = require('moment');
+const nunjucks = require('nunjucks');
+require('datetimepicker');
 
+
+var apiUrl = 'https://85a76ibfti.execute-api.us-east-1.amazonaws.com/prod';
 
 $(document).ready(function() {
 	function getMetrics(startDate, endDate) {
 		return new Promise(function(resolve) {
 			$.ajax({
-				url: 'https://localhost:8002/data?startDate=' + startDate + '&endDate=' + endDate
+				url: apiUrl + '?startDate=' + startDate + '&endDate=' + endDate
 			}).done(function(data) {
 				resolve(data);
 			});
@@ -17,13 +21,11 @@ $(document).ready(function() {
 	}
 
 	function renderMetrics(data) {
-		var chartsHTML, textHTML;
+		var chartsHTML;
 
-		chartsHTML = nunjucks.render('charts.html');
+		$('canvas').html('');
 
-		$('.charts').html(chartsHTML);
-
-		new Chart($('#issues-to-new-users'), {
+		new Chart($('#issues-to-users'), {
 			type: 'line',
 			data: {
 				labels: data.dates,
@@ -34,7 +36,15 @@ $(document).ready(function() {
 						xAxisId: 'Date',
 						yAxisId: 'GitHub Issues',
 						lineTension: 0,
-						backgroundColor: '#2AC1DE'
+						backgroundColor: 'rgba(42, 193, 222, 0.2)'
+					},
+					{
+						label: 'Total Users',
+						data: data.totalUsers,
+						xAxisId: 'Date',
+						yAxisId: 'Total Users',
+						lineTension: 0,
+						backgroundColor: 'rgba(189, 44, 0, 0.2)'
 					},
 					{
 						label: 'New Users',
@@ -42,7 +52,7 @@ $(document).ready(function() {
 						xAxisId: 'Date',
 						yAxisId: 'New Users',
 						lineTension: 0,
-						backgroundColor: '#FF9933'
+						backgroundColor: 'rgba(255, 153, 51, 0.2)'
 					}
 				]
 			}
@@ -59,7 +69,7 @@ $(document).ready(function() {
 						xAxisId: 'Date',
 						yAxisId: 'Total Users',
 						lineTension: 0,
-						backgroundColor: '#2AC1DE'
+						backgroundColor: 'rgba(42, 193, 222, 0.2)'
 					},
 					{
 						label: 'API Outages',
@@ -67,7 +77,7 @@ $(document).ready(function() {
 						xAxisId: 'Date',
 						yAxisId: 'API Outages',
 						lineTension: 0,
-						backgroundColor: '#FF9933'
+						backgroundColor: 'rgba(255, 153, 51, 0.2)'
 					}
 				]
 			}
@@ -84,7 +94,7 @@ $(document).ready(function() {
 						xAxisId: 'Date',
 						yAxisId: 'New Users',
 						lineTension: 0,
-						backgroundColor: '#2AC1DE'
+						backgroundColor: 'rgba(42, 193, 222, 0.2)'
 					},
 					{
 						label: 'Site Outages',
@@ -92,7 +102,7 @@ $(document).ready(function() {
 						xAxisId: 'Date',
 						yAxisId: 'Site Outages',
 						lineTension: 0,
-						backgroundColor: '#FF9933'
+						backgroundColor: 'rgba(255, 153, 51, 0.2)'
 					}
 				]
 			}
@@ -105,11 +115,11 @@ $(document).ready(function() {
 				datasets: [
 					{
 						label: 'API outages',
-						data: data.status === true ? 1 : 0,
+						data: data.status,
 						xAxisId: 'Date',
 						yAxisId: 'API Outages',
 						lineTension: 0,
-						backgroundColor: '#2AC1DE'
+						backgroundColor: 'rgba(42, 193, 222, 0.2)'
 					},
 					{
 						label: 'Site Outages',
@@ -117,7 +127,7 @@ $(document).ready(function() {
 						xAxisId: 'Date',
 						yAxisId: 'Site Outages',
 						lineTension: 0,
-						backgroundColor: '#FF9933'
+						backgroundColor: 'rgba(255, 153, 51, 0.2)'
 					}
 				]
 			}
@@ -134,27 +144,51 @@ $(document).ready(function() {
 						xAxisId: 'Date',
 						yAxisId: 'GitHub Issues',
 						lineTension: 0,
-						backgroundColor: '#2AC1DE'
+						backgroundColor: 'rgba(42, 193, 222, 0.2)'
 					},
 					{
 						label: 'API Outages',
-						data: data.outages === true ? 1 : 0,
+						data: data.status,
 						xAxisId: 'Date',
 						yAxisId: 'API Outages',
 						lineTension: 0,
-						backgroundColor: '#FF9933'
+						backgroundColor: 'rgba(255, 153, 51, 0.2)'
 					}
 				]
 			}
 		});
-
-		textHTML = nunjucks.render('components/metrics.html', {
-			metrics: data.totals
-		});
-
-		$('.metrics-text .render').html(textHTML);
 	}
 
-	getMetrics(moment().utc().format('YYYY-MM-DD'), moment().utc().subtract(30, 'days').format('YYYY-MM-DD'))
+	$('#start-date, #end-date').datetimepicker({
+		format: 'YYYY-MM-DD',
+		icons: {
+			up: 'fa fa-chevron-up',
+			down: 'fa fa-chevron-down',
+			previous: 'fa fa-chevron-left',
+			next: 'fa fa-chevron-right',
+			time: 'fa fa-clock-o',
+			date: 'fa fa-calendar'
+		}
+	});
+
+	getMetrics(moment().utc().subtract(30, 'days').format('YYYY-MM-DD'), moment().utc().format('YYYY-MM-DD'))
 		.then(renderMetrics);
+
+	$(document).on('click', '.header button', function() {
+		var start, end;
+
+		start = $('#start-date input').val();
+		end = $('#end-date input').val();
+
+		getMetrics(start, end)
+			.then(renderMetrics);
+	});
+
+	$('#start-date').on('dp.change', function(e) {
+		$('#end-date').data('DateTimePicker').minDate(e.date);
+	});
+
+	$('#end-date').on('dp.change', function(e) {
+		$('#start-date').data('DateTimePicker').maxDate(e.date);
+	});
 });

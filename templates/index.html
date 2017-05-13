@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en-US">
+	<head>
+		<meta charset="utf-8"/>
+
+		<title>Data Science Visualizer &middot; powered by BitScoop</title>
+
+		<meta name="description" content="View your site's analytic data." />
+
+		<script type="text/javascript">
+			window.staticUrl = "./static/";
+		</script>
+
+		<!-- RequireJS configuration -->
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.3/require.min.js"></script>
+		<script type="text/javascript" src="./static/lib/requirejs/config/paths.min.js"></script>
+
+		<!-- External fonts -->
+		<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/css/bootstrap-datetimepicker.min.css" />
+		<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Quicksand:400|Roboto:300,400,700|Open+Sans:200,300,400,700|Source+Sans+Pro:300,400,700" />
+		<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" />
+
+		<link rel="stylesheet" type="text/css" href="./static/css/site.min.css" />
+
+		<script type="text/javascript">
+			require(['site']);
+		</script>
+	</head>
+
+	<body>
+		<div class="header flexbox flex-column flex-x-center">
+			<div class="flexbox">
+				<div class="start flexbox flex-column">
+					<div>Start Date</div>
+					<div class='input-group datetimepicker shrink' id='start-date'>
+						<input type='text' class="form-control" name="start"/>
+						<span class="input-group-addon"><span class="fa fa-calendar"></span></span>
+					</div>
+				</div>
+				<div class="end flexbox flex-column">
+					<div>End Date</div>
+					<div class='input-group datetimepicker shrink' id='end-date'>
+						<input type='text' class="form-control" name="end"/>
+						<span class="input-group-addon"><span class="fa fa-calendar"></span></span>
+					</div>
+				</div>
+			</div>
+			<div>
+				<button>Submit</button>
+			</div>
+		</div>
+		<div class="charts flexbox flex-column flex-x-center">
+			<div class="flexbox flex-column flex-x-center">
+				<div>Does fixing issues relate to a change in site activity such as new users?</div>
+				<canvas id="issues-to-users"></canvas>
+			</div>
+			<div class="flexbox flex-column flex-x-center">
+				<div>Do site traffic spikes relate to outages of the API?</div>
+				<canvas id="total-users-to-api-outages"></canvas>
+			</div>
+			<div class="flexbox flex-column flex-x-center">
+				<div>Do new user spikes relate to outages of the site?</div>
+				<canvas id="new-users-to-site-outages"></canvas>
+			</div>
+			<div class="flexbox flex-column flex-x-center">
+				<div>Do outages of the API relate to outages of the site?</div>
+				<canvas id="api-outages-to-site-outages"></canvas>
+			</div>
+			<div class="flexbox flex-column flex-x-center">
+				<div>Do outages of the API or relate to higher number of code commits?</div>
+				<canvas id="api-outages-to-issues"></canvas>
+			</div>
+		</div>
+	</body>
+</html>

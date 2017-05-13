@@ -222,7 +222,6 @@ exports.handler = function(event, context, callback) {
 
 				let date = moment(new Date(item.date));
 
-				console.log(item);
 				if (!dateIndex.hasOwnProperty(item.date)) {
 					dateIndex[item.date] = data.dates.length;
 
@@ -246,13 +245,13 @@ exports.handler = function(event, context, callback) {
 				if (!dateIndex.hasOwnProperty(item.date)) {
 					dateIndex[item.date] = data.dates.length;
 
-					data.status.push(item.status);
+					data.status.push(item.status ? 1 : 0);
 					data.dates.push(date.format('MM/DD/YYYY'));
 				}
 				else {
 					index = dateIndex[item.date];
 
-					data.status[index] = item.status;
+					data.status[index] = item.status ? 1 : 0;
 				}
 			});
 

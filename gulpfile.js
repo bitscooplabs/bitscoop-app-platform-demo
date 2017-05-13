@@ -72,12 +72,10 @@ gulp.task('copy:assets', function() {
 
 gulp.task('copy:templates', function() {
 	return gulp.src([
-		'error.html',
-		'index.html'
+		'templates/**'
 	])
 		.pipe(gulp.dest('dist/' + date + '/'))
 });
-
 
 
 gulp.task('devel', function(done) {
