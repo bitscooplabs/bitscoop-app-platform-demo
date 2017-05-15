@@ -11,8 +11,6 @@ exports.handler = function(event, context, callback) {
 	let start = event.startDate;
 	let end = event.endDate;
 
-	console.log(event.endDate);
-
 	let startDate = start ? moment(start).format('YYYY-MM-DD') : moment().utc().subtract(1, 'month').format('YYYY-MM-DD');
 	let endDate = end ? moment(end).format('YYYY-MM-DD') : moment().utc().format('YYYY-MM-DD');
 

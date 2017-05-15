@@ -3,11 +3,10 @@
 const Chart = require('chart');
 const $ = require('jquery');
 const moment = require('moment');
-const nunjucks = require('nunjucks');
 require('datetimepicker');
 
 
-var apiUrl = 'https://85a76ibfti.execute-api.us-east-1.amazonaws.com/prod';
+var apiUrl = '';
 
 $(document).ready(function() {
 	function getMetrics(startDate, endDate) {
@@ -21,9 +20,8 @@ $(document).ready(function() {
 	}
 
 	function renderMetrics(data) {
-		var chartsHTML;
-
 		$('canvas').html('');
+		$('iframe').remove();
 
 		new Chart($('#issues-to-users'), {
 			type: 'line',

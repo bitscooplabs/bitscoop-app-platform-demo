@@ -8,9 +8,6 @@ require.config({
 
 		//Filters
 		'relative-time': window.staticUrl + 'js/filters/relative-time.min',
-
-		//
-		'nunjucks-env': window.staticUrl + 'lib/nunjucks/environments/default.min'
 	}
 });
 
@@ -27,17 +24,11 @@ requirejs.config({
 		'jquery-deserialize': 'https://cdn.bitscoop.com/jquery-deserialize/1.3.2/jquery.deserialize-1.3.2.min',  // https://github.com/kflorence/jquery-deserialize
 		lodash: 'https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.min',  // https://github.com/lodash/lodash
 		moment: 'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min',  // http://momentjs.com/
-		nunjucks: 'https://cdn.bitscoop.com/nunjucks/2.4.1/nunjucks-2.4.1.min',  // https://github.com/mozilla/nunjucks
 	},
 
 	map: {
 		'*': {
-			'promises-ap': 'bluebird',
-			'nunjucks': 'nunjucks-env'
-		},
-
-		'nunjucks-env': {
-			'nunjucks': 'nunjucks'
+			'promises-ap': 'bluebird'
 		}
 	},
 
@@ -60,10 +51,6 @@ requirejs.config({
 
 		'jquery-deserialize': {
 			deps: ['jquery']
-		},
-
-		nunjucks: {
-			exports: 'nunjucks'
 		},
 
 		'relative-time': {
