@@ -5,9 +5,6 @@ require.config({
 
 		// Util
 		'moment-fix': window.staticUrl + 'js/util/moment-fix.min',
-
-		//Filters
-		'relative-time': window.staticUrl + 'js/filters/relative-time.min',
 	}
 });
 
@@ -51,10 +48,6 @@ requirejs.config({
 
 		'jquery-deserialize': {
 			deps: ['jquery']
-		},
-
-		'relative-time': {
-			deps: ['moment']
 		}
 	}
 });

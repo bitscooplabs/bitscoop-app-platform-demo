@@ -7,7 +7,7 @@ const moment = require('moment');
 require('datetimepicker');
 
 
-var apiUrl = 'https://85a76ibfti.execute-api.us-east-1.amazonaws.com/prod';
+var apiUrl = '';
 var githubUrl = apiUrl + '/github';
 var googleUrl = apiUrl + '/google';
 var postmanUrl = apiUrl + '/postman';

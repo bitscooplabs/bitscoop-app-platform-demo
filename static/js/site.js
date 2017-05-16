@@ -6,7 +6,7 @@ const moment = require('moment');
 require('datetimepicker');
 
 
-var apiUrl = '';
+var apiUrl = 'https://85a76ibfti.execute-api.us-east-1.amazonaws.com/prod';
 
 $(document).ready(function() {
 	function getMetrics(startDate, endDate) {
