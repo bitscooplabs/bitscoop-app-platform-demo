@@ -16,7 +16,12 @@ gulp.task('default', function(done) {
 
 
 gulp.task('build', function(done) {
-	sequence('lint', 'clean', ['copy:assets', 'copy:templates', 'less', 'nunjucks', 'uglify'], 'snapshot', done);
+	sequence('lint', 'clean', ['copy:assets', 'copy:templates', 'less', 'uglify'], 'snapshot', done);
+});
+
+
+gulp.task('build:individual', function(done) {
+	sequence('lint', 'clean', ['copy:assets', 'copy:templates', 'less', 'uglify:individual'], 'snapshot', done);
 });
 
 
@@ -30,7 +35,9 @@ gulp.task('bundle', function() {
 	let renameExpression = new RegExp('^' + basename);
 
 	return gulp.src([
-		'src/**'
+		'src/index.js',
+		'src/node_modules/**',
+		'src/package.json'
 	])
 		.pipe(rename(function(path) {
 			path.dirname = path.dirname.replace(renameExpression, pkg.name);
@@ -38,6 +45,107 @@ gulp.task('bundle', function() {
 			return path;
 		}))
 		.pipe(zip(pkg.name + '-' + pkg.version + '.zip'))
+		.pipe(gulp.dest('dist'));
+});
+
+
+gulp.task('bundle:individual', function(done) {
+	sequence('lint', ['bundle:github', 'bundle:google', 'bundle:postman', 'bundle:statuscake'], done);
+});
+
+
+gulp.task('bundle:github', function() {
+	const path = require('path');
+
+	const zip = require('gulp-zip');
+	const rename = require('gulp-rename');
+
+	let basename = path.basename(process.cwd());
+	let renameExpression = new RegExp('^' + basename);
+
+	return gulp.src([
+		'src/views/github/index.js',
+		'src/node_modules/**',
+		'src/package.json'
+	])
+		.pipe(rename(function(path) {
+			path.dirname = path.dirname.replace(renameExpression, pkg.name);
+
+			return path;
+		}))
+		.pipe(zip(pkg.name + '-github-' + pkg.version + '.zip'))
+		.pipe(gulp.dest('dist'));
+});
+
+
+gulp.task('bundle:google', function() {
+	const path = require('path');
+
+	const zip = require('gulp-zip');
+	const rename = require('gulp-rename');
+
+	let basename = path.basename(process.cwd());
+	let renameExpression = new RegExp('^' + basename);
+
+	return gulp.src([
+		'src/views/google/index.js',
+		'src/node_modules/**',
+		'src/package.json'
+	])
+		.pipe(rename(function(path) {
+			path.dirname = path.dirname.replace(renameExpression, pkg.name);
+
+			return path;
+		}))
+		.pipe(zip(pkg.name + '-google-' + pkg.version + '.zip'))
+		.pipe(gulp.dest('dist'));
+});
+
+
+gulp.task('bundle:postman', function() {
+	const path = require('path');
+
+	const zip = require('gulp-zip');
+	const rename = require('gulp-rename');
+
+	let basename = path.basename(process.cwd());
+	let renameExpression = new RegExp('^' + basename);
+
+	return gulp.src([
+		'src/views/postman/index.js',
+		'src/node_modules/**',
+		'src/package.json'
+	])
+		.pipe(rename(function(path) {
+			path.dirname = path.dirname.replace(renameExpression, pkg.name);
+
+			return path;
+		}))
+		.pipe(zip(pkg.name + '-postman-' + pkg.version + '.zip'))
+		.pipe(gulp.dest('dist'));
+});
+
+
+gulp.task('bundle:statuscake', function() {
+	const path = require('path');
+
+	const zip = require('gulp-zip');
+	const rename = require('gulp-rename');
+
+	let basename = path.basename(process.cwd());
+	let renameExpression = new RegExp('^' + basename);
+
+	return gulp.src([
+		'src/views/statuscake/index.js',
+		'src/node_modules/**',
+		'src/package.json'
+	])
+		.pipe(rename(function(path) {
+			path.dirname = path.dirname.replace(renameExpression, pkg.name);
+
+			return path;
+		}))
+		.pipe(zip(pkg.name + '-statuscake-' + pkg.version + '.zip'))
 		.pipe(gulp.dest('dist'));
 });
 
@@ -79,7 +187,7 @@ gulp.task('copy:templates', function() {
 
 
 gulp.task('devel', function(done) {
-	sequence('clean', ['copy:assets', 'copy:templates', 'less', 'nunjucks', 'uglify:devel'], done);
+	sequence('clean', ['copy:assets', 'copy:templates', 'less', 'uglify:devel'], done);
 });
 
 
@@ -160,65 +268,6 @@ gulp.task('lint:less', function() {
 });
 
 
-gulp.task('nunjucks', function() {
-	const path = require('path');
-
-	const concat = require('gulp-concat');
-	const gutil = require('gulp-util');
-	const header = require('gulp-header');
-	const nunjucks = require('gulp-nunjucks');
-	const rename = require('gulp-rename');
-	const uglify = require('gulp-uglify');
-
-	return gulp.src([
-		'nunjucks/**/*.html'
-	])
-		.pipe(nunjucks.precompile({
-			env: (function(nunjucks) {
-				var environment;
-
-				environment = new nunjucks.Environment();
-
-				environment.addFilter('get', function() {});
-				environment.addFilter('date', function() {});
-				environment.addFilter('fileSize', function() {});
-
-				return environment;
-			})(require('nunjucks')),
-
-			name: (function() {
-				let delimiter, names;
-
-				delimiter = 'nunjucks' + path.sep;
-				names = {};
-
-				return function(file) {
-					let filename = file.path;
-					let i = filename.indexOf(delimiter);
-					let template = ~i ? filename.slice(i + delimiter.length) : template.replace(new RegExp(path.sep, 'g'), '/');
-
-					if (names.hasOwnProperty(template)) {
-						gutil.log('Name collison on nunjucks template "' + template + '":\n\tOld: ' + names[template] + '\n\tNew: ' + filename);
-					}
-
-					names[template] = filename;
-
-					return template;
-				};
-			})()
-		}))
-		.pipe(concat('templates.js'))
-		.pipe(uglify())
-		.pipe(header(banner, {
-			pkg: pkg
-		}))
-		.pipe(rename({
-			extname: '.min.js'
-		}))
-		.pipe(gulp.dest('artifacts/js'));
-});
-
-
 gulp.task('snapshot', function() {
 	return gulp.src([
 		'artifacts/**'
@@ -236,6 +285,7 @@ gulp.task('uglify', function() {
 
 	return gulp.src([
 		'static/**/*.js',
+		'!static/js/site2.js',
 		'!static/lib/requirejs/**/*.js'
 	])
 		.pipe(babel({
@@ -246,6 +296,43 @@ gulp.task('uglify', function() {
 			'static/lib/requirejs/**/*.js'
 		], {
 			base: 'static'
+		}))
+		.pipe(uglify())
+		.pipe(header(banner, {
+			pkg: pkg
+		}))
+		.pipe(rename({
+			extname: '.min.js'
+		}))
+		.pipe(gulp.dest('artifacts'));
+});
+
+
+gulp.task('uglify:individual', function() {
+	const addsrc = require('gulp-add-src');
+	const babel = require('gulp-babel');
+	const header = require('gulp-header');
+	const rename = require('gulp-rename');
+	const uglify = require('gulp-uglify');
+
+	return gulp.src([
+		'static/**/*.js',
+		'!static/js/site.js',
+		'!static/lib/requirejs/**/*.js'
+	])
+		.pipe(babel({
+			presets: ['es2015'],
+			plugins: ['transform-es2015-modules-amd']
+		}))
+		.pipe(addsrc([
+			'static/lib/requirejs/**/*.js'
+		], {
+			base: 'static'
+		}))
+		.pipe(rename(function(path) {
+			if (path.basename === 'site2') {
+				path.basename = 'site'
+			}
 		}))
 		.pipe(uglify())
 		.pipe(header(banner, {
@@ -287,13 +374,6 @@ gulp.task('watch', function() {
 	gulp.watch([
 		'static/**/*.js'
 	], ['uglify:devel'])
-		.on('error', function() {
-			this.emit('end');
-		});
-
-	gulp.watch([
-		'nunjucks/**/*.html'
-	], ['nunjucks'])
 		.on('error', function() {
 			this.emit('end');
 		});
