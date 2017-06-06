@@ -3,10 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "author": "BitScoop Labs, Inc.",
-  "scripts": {
-    "preinstall": "rm -f node_modules/bitscoop-app-platform-demo",
-    "postinstall": "cd node_modules && ln -s .. bitscoop-app-platform-demo"
-  },
   "dependencies": {
     "lodash": "^4.6.1",
     "moment": "^2.18.1",
