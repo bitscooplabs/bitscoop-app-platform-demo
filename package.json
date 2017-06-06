@@ -1,11 +1,11 @@
 {
-  "name": "bitscoop-data-visualizer-demo",
+  "name": "bitscoop-app-platform-demo",
   "version": "0.1.0",
   "private": true,
   "author": "BitScoop Labs, Inc.",
   "scripts": {
-    "preinstall": "rm -f node_modules/bitscoop-data-visualizer-demo",
-    "postinstall": "cd node_modules && ln -s .. bitscoop-data-visualizer-demo"
+    "preinstall": "rm -f node_modules/bitscoop-app-platform-demo",
+    "postinstall": "cd node_modules && ln -s .. bitscoop-app-platform-demo"
   },
   "dependencies": {
     "lodash": "^4.6.1",
@@ -34,6 +34,6 @@
     "gulp-util": "^3.0.8",
     "gulp-zip": "^4.0.0",
     "less-plugin-autoprefix": "^1.5.1",
-    "run-sequence": "^1.2.2",
+    "run-sequence": "^1.2.2"
   }
 }
